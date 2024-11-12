@@ -132,12 +132,11 @@ class Brew(dotbot.Plugin):
 
         self._log.debug(command)
         p = subprocess.Popen(command, cwd=self.cwd, shell=True, **kwargs)
-        p.wait()
         output, output_err = p.communicate()
 
-        if output_err is not None:
+        if p.returncode != 0 or output_err is not None:
             if error_message is None:
-                error_message = "Command failed: {}".format(command)
+                error_message = "Command failed: return {}, stderr {}".format(p.returncode, command)
 
             raise ValueError(error_message)
 
